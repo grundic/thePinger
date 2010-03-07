@@ -1,0 +1,6 @@
+body {background-color:#6666FF}
+span.online {color:green;}
+span.offline {color:red;}
+span.pingtime {font-size:10px; color:#FFFF00;}
+span.ConnErr {color:#FF0000;}
+div.PingList {width:220px; padding:10px; border:5px solid gray; margin:auto;background-color:#303030;}
