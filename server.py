@@ -26,6 +26,7 @@ class PingHandler(tornado.web.RequestHandler):
         if Global.result:
             if not Global.pingtime: Global.pingtime = -1
             json_res = json.dumps([{'pingtime': Global.pingtime}, [{'host': m.keys()[0], 'reply':m.values()[0]} for m in Global.result]])
+            self.set_header("Content-Type", "application/json")
             self.write(json_res)
         else:
             self.write('Data not avaliable yet...')
@@ -33,8 +34,8 @@ class PingHandler(tornado.web.RequestHandler):
 #----------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     
-    #pingList = ['192.168.13.44', '172.22.22.1', '172.22.22.189', 'google.com', 'localhost', '192.168.10.14']
-    pingList = ['google.com', 'ya.ru']
+    pingList = ['192.168.13.44', '172.22.22.1', '172.22.22.189', 'google.com', 'localhost', '192.168.10.14']
+    #pingList = ['google.com', 'ya.ru']
 
     manager = Manager()
     Global = manager.Namespace()

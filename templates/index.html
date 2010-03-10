@@ -14,7 +14,7 @@
     function periodicalUpdate(){
         jQuery.ajax({
             url:"/ping",
-            dataType:"json",
+            //dataType:"json",
             success: function(data){
                 if (null == data){
                     jQuery("#output").html("<span class=ConnErr>Data not avaliable!</span>");
