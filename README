@@ -1,0 +1,2 @@
+This project shows usage of Tornado with some Ajax feachers.
+It's a simple ping monitor. Data on client is updated only, when something changes on server.
