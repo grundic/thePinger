@@ -5,6 +5,9 @@ from threading import Thread
 from time import sleep
 import json
 import os
+import hashlib
+from datetime import datetime
+import random
 
 from Ping import ping
 from Resident import resident
@@ -21,15 +24,37 @@ class MainHandler(tornado.web.RequestHandler):
       self.render("templates/index.html")
 
 class PingHandler(tornado.web.RequestHandler):
-    def get(self):
+    @tornado.web.asynchronous    
+    def post(self):
+        self.user_hash = self.request.arguments['hash'][0]
+        self.scheduler = tornado.ioloop.PeriodicCallback(self._check, 1000)
+        self.scheduler.start()
 
-        if Global.result:
-            if not Global.pingtime: Global.pingtime = -1
-            json_res = json.dumps([{'pingtime': Global.pingtime}, [{'host': m.keys()[0], 'reply':m.values()[0]} for m in Global.result]])
-            self.set_header("Content-Type", "application/json")
-            self.write(json_res)
+    def _check(self):
+        md5 = PingHandler.equalHash(self.user_hash)
+        if md5:
+            self.scheduler.stop()
+            if Global.result:
+                print Global.result
+                if not Global.pingtime: Global.pingtime = -1
+                json_res = json.dumps([Global.pingtime, md5, Global.result])
+                self.set_header("Content-Type", "application/json")
+                self.write(json_res)
+            else:
+                self.write('Data not avaliable yet...')
+            self.finish()
+
+
+    @staticmethod
+    def equalHash(user_hash):        
+        md5 = hashlib.md5()
+        md5.update(str(Global.result))
+
+        if (user_hash == md5.hexdigest()):
+            return None
         else:
-            self.write('Data not avaliable yet...')
+            return md5.hexdigest()
+
            
 #----------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -40,6 +65,7 @@ if __name__ == '__main__':
     manager = Manager()
     Global = manager.Namespace()
     Global.result = {}
+    Global.pingtime = 0
 
     Global.result = [{'192.168.1.2': 0}, {'192.168.1.3': 2}, {'google.com': 2}]
 
